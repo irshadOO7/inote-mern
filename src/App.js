@@ -6,26 +6,35 @@ import {
 } from "react-router-dom";
 import Home from './component/Home';
 import About from './component/About';
+import Login from './component/Login';
+import Singup from './component/Singup';
 import NoteSate from './context/NoteState';
 import Alert from './component/Alert';
+import { useState } from 'react';
 const App = ()=> {
+  const [alert, setAlert] = useState(null);
+  const showAlert = (msg, type) =>{
+    setAlert({
+      msg:msg,
+      type:type
+    })
+    setTimeout(() => {
+      setAlert(null);
+    }, 1500);
+  }
   return (
     <>
     <NoteSate>
       <Router>
         <Navbar/>
-        <Alert  message = "good app"/>
+        <Alert  alert={alert}/>
         <div className="container">
         <Routes>
-          <Route exact path="/" element={<Home/>}></Route>
+          <Route exact path="/" element={<Home showAlert={showAlert} />}></Route>
           <Route exact path="/About" element={<About/> }></Route>
-          {/* <Route exact path="/business" element={<News key="business" pageSize={6} category="business"   apikey={apiKey} /> }></Route>
-          <Route exact path="/entertainment" element={<News key="entertainment" pageSize={6} category="entertainment"   apikey={apiKey} /> }></Route>
-          <Route exact path="/health" element={<News key="health" pageSize={6} category="health"   apikey={apiKey} /> }></Route>
-          <Route exact path="/science" element={<News key="science" pageSize={6} category="science"   apikey={apiKey} /> }></Route>
-          <Route exact path="/sports" element={<News key="sports" pageSize={6} category="sports"   apikey={apiKey} /> }></Route>
-          <Route exact path="/technology" element={<News key="technology" pageSize={6} category="technology"  apikey={apiKey}/>}></Route> */}
-        </Routes>
+          <Route exact path="/login" element={<Login showAlert={showAlert}/> }></Route>
+          <Route exact path="/singup" element={<Singup showAlert={showAlert}/> }></Route>
+          </Routes>
         </div>
         </Router>
         </NoteSate>

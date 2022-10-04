@@ -14,17 +14,18 @@ auth.post('/create',[
     body('email','Enter a valid Email').isEmail(),
     body('password','Password must be atleast 5 characters').isLength({ min: 5 }),
 ],async(req, res) => {
+ let status = false;
   //if there are error return bad request
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({status:status, errors: errors.array() });
   }
 //check whether the user with this email exist already
 try{
 let user = await User.findOne({email: req.body.email});
 console.log(user);
 if(user){
-  return res.status(400).json({error: "Sorry a user with this Email alreay exists"});
+  return res.status(400).json({status:status, error: "Sorry a user with this Email alreay exists"});
 }
 const salt = await bcrypt.genSalt(10);
 const secPass = await bcrypt.hash(req.body.password,salt);
@@ -39,8 +40,9 @@ const secPass = await bcrypt.hash(req.body.password,salt);
       }
     }
     const authToken = jwt.sign(data, JWT_SECRET);
+    status=true;
     console.log(authToken);
-    res.json({authToken});
+    res.json({status,authToken});
     // res.json(user);
    
 }catch(error){
@@ -56,20 +58,21 @@ auth.post('/login',[
     body('password','Password must be atleast 5 characters').exists(),
 ],async(req, res) => {
   //if there are error return bad request
+  let status = false;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({status:status, errors: errors.array() });
   }
 //check whether the user with this email exist already
 const {email,password} = req.body;
 try{
 let user = await User.findOne({email});
 if(!user){
-  return res.status(400).json({error: "Please enter right credietial"});
+  return res.status(400).json({status:status, error: "Please enter right credietial"});
 }
 const paasCompare = await bcrypt.compare(password,user.password);
 if(!paasCompare){
-  return res.status(400).json({error: "Please enter right credietial"});
+  return res.status(400).json({status:status, error: "Please enter right credietial"});
 }
     const data = {
       user:{
@@ -77,8 +80,9 @@ if(!paasCompare){
       }
     }
     const authToken = jwt.sign(data, JWT_SECRET);
-    console.log(authToken);
-    res.json({authToken});
+    status = true;
+    // console.log(authToken);
+    res.json({status,authToken});
     // res.json(user);
    
 }catch(error){

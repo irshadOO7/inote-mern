@@ -16,7 +16,7 @@ notes.get('/fetchallnote', fatchUser, async(req, res)=>{
     }
 })
 
-notes.get('/addnotes', fatchUser,[
+notes.post('/addnotes', fatchUser,[
     body('title','Enter a valid Title').isLength({ min: 3 }),
     body('description','Enter a valid description').isLength({ min: 5 }),
 ], async(req, res)=>{
